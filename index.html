@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARMKES - Кликай и зарабатывай</title>
+    <style>
+        /* CSS стили здесь */
+    </style>
+</head>
+<body>
+    <!-- HTML разметка игры здесь -->
+
+    <script>
+        // JavaScript код здесь
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARMKES - Кликай и зарабатывай</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c, #1a1a2e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #8a2be2, #00bfff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+
+        .description {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+            background: rgba(30, 30, 46, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .coins, .level {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .coins {
+            color: gold;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .level {
+            color: #00bfff;
+        }
+
+        .level-progress {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: rgba(50, 50, 70, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8a2be2, #00bfff);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .click-area {
+            position: relative;
+            margin: 30px 0;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .bank-card {
+            width: 300px;
+            height: 180px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            z-index: 1;
+        }
+
+        .bank-card-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .card-chip {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #d4af37, #ffdf00);
+            border-radius: 5px;
+            margin: 0 auto 10px;
+        }
+
+        .click-value {
+            font-size: 1rem;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .upgrades {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+
+.upgrade {
+            background: rgba(30, 30, 46, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upgrade:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .upgrade-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .upgrade-cost {
+            color: gold;
+            font-weight: bold;
+        }
+
+        .upgrade-description {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-level {
+            color: #00bfff;
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: rgba(30, 30, 46, 0.9);
+            border-left: 4px solid #8a2be2;
+            border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .coin-animation {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, gold, orange);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: coinFly 1s forwards;
+        }
+
+        @keyframes coinFly {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .pulse {
+            animation: pulse 0.3s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .card-level-1 { background: linear-gradient(135deg, #1e3c72, #2a5298); }
+        .card-level-5 { background: linear-gradient(135deg, #00b09b, #96c93d); }
+        .card-level-10 { background: linear-gradient(135deg, #7b4397, #dc2430); }
+        .card-level-15 { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .card-level-20 { background: linear-gradient(135deg, #f0f0f0, #c9c9c9); color: #333; }
+        .card-level-30 { background: linear-gradient(135deg, #232526, #414345); }
+        .card-level-40 { background: linear-gradient(135deg, #ffd700, #daa520); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">FARMKES</h1>
+        <p class="description">Кликай и зарабатывай на FARMKES</p>
+    </div>
+
+    <div class="stats">
+        <div class="coins">Монеты: <span id="coins">0</span></div>
+        <div class="level">Уровень: <span id="level">1</span></div>
+    </div>
+
+    <div class="level-progress">
+        <div class="level-info">
+            <span>До следующего уровня:</span>
+            <span id="progress-text">0/100</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+
+    <div class="click-area">
+        <div class="bank-card card-level-1" id="bank-card">
+            <div class="bank-card-content">
+                <div class="card-chip"></div>
+                <div>FARMKES CARD</div>
+                <div class="click-value">+<span id="click-value">1</span> монет за клик</div>
+            </div>
+        </div>
+    </div>
+
+wyvak, [30.11.2025 17:12]
+<div class="upgrades">
+        <div class="upgrade" id="upgrade-click">
+            <div class="upgrade-header">
+                <div class="upgrade-name">Улучшение клика</div>
+                <div class="upgrade-cost" id="click-cost">10</div>
+            </div>
+            <div class="upgrade-description">Увеличивает количество монет за клик</div>
+            <div class="upgrade-level">Уровень: <span id="click-level">1</span></div>
+        </div>
+
+        <div class="upgrade" id="upgrade-auto">
+            <div class="upgrade-header">
+                <div class="upgrade-name">Авто-кликер</div>
+                <div class="upgrade-cost" id="auto-cost">50</div>
+            </div>
+            <div class="upgrade-description">Автоматически кликает каждые 5 секунд</div>
+            <div class="upgrade-level">Уровень: <span id="auto-level">0</span></div>
+        </div>
+
+        <div class="upgrade" id="upgrade-multiplier">
+            <div class="upgrade-header">
+                <div class="upgrade-name">Множитель дохода</div>
+                <div class="upgrade-cost" id="multiplier-cost">100</div>
+            </div>
+            <div class="upgrade-description">Увеличивает доход от всех источников</div>
+            <div class="upgrade-level">Уровень: <span id="multiplier-level">1</span></div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Игровые переменные
+        let coins = 0;
+        let level = 1;
+        let exp = 0;
+        let expToNextLevel = 100;
+
+        // Улучшения
+        let clickValue = 1;
+        let clickLevel = 1;
+        let clickCost = 10;
+
+        let autoLevel = 0;
+        let autoCost = 50;
+        let autoInterval = null;
+
+        let multiplierLevel = 1;
+        let multiplierCost = 100;
+
+        // Элементы DOM
+        const coinsElement = document.getElementById('coins');
+        const levelElement = document.getElementById('level');
+        const progressTextElement = document.getElementById('progress-text');
+        const progressFillElement = document.getElementById('progress-fill');
+        const bankCardElement = document.getElementById('bank-card');
+        const clickValueElement = document.getElementById('click-value');
+        const notificationElement = document.getElementById('notification');
+
+        // Элементы улучшений
+        const clickCostElement = document.getElementById('click-cost');
+        const clickLevelElement = document.getElementById('click-level');
+        const autoCostElement = document.getElementById('auto-cost');
+        const autoLevelElement = document.getElementById('auto-level');
+        const multiplierCostElement = document.getElementById('multiplier-cost');
+        const multiplierLevelElement = document.getElementById('multiplier-level');
+
+        // Функция клика по карте
+        function handleCardClick() {
+            // Добавляем монеты
+            const earnedCoins = clickValue * multiplierLevel;
+            coins += earnedCoins;
+            coinsElement.textContent = Math.floor(coins);
+
+            // Добавляем опыт
+            exp += earnedCoins;
+
+            // Проверяем уровень
+            checkLevelUp();
+
+            // Обновляем прогресс-бар
+            updateProgressBar();
+
+            // Создаем анимацию монеты
+            createCoinAnimation();
+
+            // Анимация пульсации карты
+            bankCardElement.classList.add('pulse');
+            setTimeout(() => {
+                bankCardElement.classList.remove('pulse');
+            }, 300);
+        }
+
+        // Функция проверки повышения уровня
+        function checkLevelUp() {
+            if (exp >= expToNextLevel) {
+                level++;
+
+
+exp -= expToNextLevel;
+                expToNextLevel = Math.floor(expToNextLevel * 1.5);
+
+                levelElement.textContent = level;
+                updateCardAppearance();
+
+                showNotification(Вы подняли уровень! Теперь у вас ${level} уровень);
+
+                // Проверяем, не нужно ли снова повысить уровень
+                checkLevelUp();
+            }
+        }
+
+        // Функция обновления прогресс-бара
+        function updateProgressBar() {
+            const progressPercent = (exp / expToNextLevel) * 100;
+            progressFillElement.style.width = ${progressPercent}%;
+            progressTextElement.textContent = ${Math.floor(exp)}/${expToNextLevel};
+        }
+
+        // Функция создания анимации монеты
+        function createCoinAnimation() {
+            const coin = document.createElement('div');
+            coin.className = 'coin-animation';
+
+            // Случайная позиция вокруг карты
+            const cardRect = bankCardElement.getBoundingClientRect();
+            const x = cardRect.left + Math.random() * cardRect.width;
+            const y = cardRect.top + Math.random() * cardRect.height;
+
+            coin.style.left = ${x}px;
+            coin.style.top = ${y}px;
+
+            document.body.appendChild(coin);
+
+            // Удаляем элемент после анимации
+            setTimeout(() => {
+                document.body.removeChild(coin);
+            }, 1000);
+        }
+
+        // Функция обновления внешнего вида карты
+        function updateCardAppearance() {
+            // Удаляем все классы уровня карты
+            bankCardElement.classList.remove('card-level-1', 'card-level-5', 'card-level-10',
+                                           'card-level-15', 'card-level-20', 'card-level-30', 'card-level-40');
+
+            // Добавляем соответствующий класс уровня
+            if (level >= 40) {
+                bankCardElement.classList.add('card-level-40');
+            } else if (level >= 30) {
+                bankCardElement.classList.add('card-level-30');
+            } else if (level >= 20) {
+                bankCardElement.classList.add('card-level-20');
+            } else if (level >= 15) {
+                bankCardElement.classList.add('card-level-15');
+            } else if (level >= 10) {
+                bankCardElement.classList.add('card-level-10');
+            } else if (level >= 5) {
+                bankCardElement.classList.add('card-level-5');
+            } else {
+                bankCardElement.classList.add('card-level-1');
+            }
+        }
+
+        // Функция показа уведомления
+        function showNotification(message) {
+            notificationElement.textContent = message;
+            notificationElement.classList.add('show');
+
+            setTimeout(() => {
+                notificationElement.classList.remove('show');
+            }, 3000);
+        }
+
+        // Функция улучшения клика
+        function upgradeClick() {
+            if (coins >= clickCost) {
+                coins -= clickCost;
+                coinsElement.textContent = Math.floor(coins);
+
+                clickLevel++;
+                clickValue = Math.floor(clickValue * 1.5);
+                clickCost = Math.floor(clickCost * 2.5);
+
+                clickCostElement.textContent = clickCost;
+                clickLevelElement.textContent = clickLevel;
+                clickValueElement.textContent = clickValue * multiplierLevel;
+
+                showNotification('Вы купили улучшение клика! ✨');
+            }
+        }
+
+        // Функция улучшения авто-кликера
+        function upgradeAuto() {
+
+
+if (coins >= autoCost) {
+                coins -= autoCost;
+                coinsElement.textContent = Math.floor(coins);
+
+                autoLevel++;
+                autoCost = Math.floor(autoCost * 3);
+
+                autoCostElement.textContent = autoCost;
+                autoLevelElement.textContent = autoLevel;
+
+                // Запускаем авто-кликер, если он еще не запущен
+                if (!autoInterval) {
+                    autoInterval = setInterval(() => {
+                        // Авто-клик работает на основе уровня авто-кликера
+                        for (let i = 0; i < autoLevel; i++) {
+                            handleCardClick();
+                        }
+                    }, 5000);
+                }
+
+                showNotification('Вы купили авто-кликер! ✨');
+            }
+        }
+
+        // Функция улучшения множителя
+        function upgradeMultiplier() {
+            if (coins >= multiplierCost) {
+                coins -= multiplierCost;
+                coinsElement.textContent = Math.floor(coins);
+
+                multiplierLevel++;
+                multiplierCost = Math.floor(multiplierCost * 4);
+
+                multiplierCostElement.textContent = multiplierCost;
+                multiplierLevelElement.textContent = multiplierLevel;
+                clickValueElement.textContent = clickValue * multiplierLevel;
+
+                showNotification('Вы купили множитель дохода! ✨');
+            }
+        }
+
+        // Инициализация игры
+        function initGame() {
+            // Начальные значения
+            coinsElement.textContent = coins;
+            levelElement.textContent = level;
+            updateProgressBar();
+            updateCardAppearance();
+
+            // Обработчики событий
+            bankCardElement.addEventListener('click', handleCardClick);
+
+            document.getElementById('upgrade-click').addEventListener('click', upgradeClick);
+            document.getElementById('upgrade-auto').addEventListener('click', upgradeAuto);
+            document.getElementById('upgrade-multiplier').addEventListener('click', upgradeMultiplier);
+
+            // Показываем начальное уведомление
+            setTimeout(() => {
+                showNotification('Добро пожаловать в FARMKES! Кликайте по карте, чтобы зарабатывать монеты!');
+            }, 1000);
+        }
+
+        // Запускаем игру при загрузке страницы
+        window.onload = initGame;
+    </script>
+</body>
+</html>
